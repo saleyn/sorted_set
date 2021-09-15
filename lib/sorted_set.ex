@@ -46,7 +46,7 @@ defmodule Discord.SortedSet do
   @spec new(capacity :: pos_integer(), bucket_size :: pos_integer()) ::
           t() | Types.common_errors()
   def new(capacity \\ @default_capacity, bucket_size \\ @default_bucket_size) do
-    {:ok, set} = NifBridge.new(capacity, bucket_size)
+    {:ok, set} = NifBridge.new_nif(capacity, bucket_size)
     set
   end
 
@@ -86,12 +86,12 @@ defmodule Discord.SortedSet do
   def from_proper_enumerable([], bucket_size), do: new(@default_capacity, bucket_size)
 
   def from_proper_enumerable(terms, bucket_size) do
-    {:ok, set} = NifBridge.empty(Enum.count(terms), bucket_size)
+    {:ok, set} = NifBridge.empty_nif(Enum.count(terms), bucket_size)
 
     terms
     |> Enum.chunk_every(bucket_size - 1)
     |> Enum.reduce_while(set, fn chunk, set ->
-      case NifBridge.append_bucket(set, chunk) do
+      case NifBridge.append_bucket_nif(set, chunk) do
         {:ok, :ok} ->
           {:cont, set}
 
@@ -114,7 +114,7 @@ defmodule Discord.SortedSet do
   """
   @spec add(set :: t(), item :: Types.supported_term()) :: t() | Types.common_errors()
   def add(set, item) do
-    case NifBridge.add(set, item) do
+    case NifBridge.add_nif(set, item) do
       {:ok, _} ->
         set
 
@@ -137,7 +137,7 @@ defmodule Discord.SortedSet do
   @spec index_add(set :: t(), item :: any()) ::
           {index :: non_neg_integer() | nil, t()} | Types.common_errors()
   def index_add(set, item) do
-    case NifBridge.add(set, item) do
+    case NifBridge.add_nif(set, item) do
       {:ok, {:added, index}} ->
         {index, set}
 
@@ -163,7 +163,7 @@ defmodule Discord.SortedSet do
   """
   @spec remove(set :: t(), item :: any()) :: t() | Types.common_errors()
   def remove(set, item) do
-    case NifBridge.remove(set, item) do
+    case NifBridge.remove_nif(set, item) do
       {:ok, {:removed, _}} ->
         set
 
@@ -190,7 +190,7 @@ defmodule Discord.SortedSet do
   @spec index_remove(set :: t(), item :: any()) ::
           {index :: non_neg_integer(), t()} | Types.common_errors()
   def index_remove(set, item) do
-    case NifBridge.remove(set, item) do
+    case NifBridge.remove_nif(set, item) do
       {:ok, {:removed, index}} ->
         {index, set}
 
@@ -210,7 +210,7 @@ defmodule Discord.SortedSet do
   """
   @spec size(set :: t()) :: non_neg_integer() | Types.common_errors()
   def size(set) do
-    case NifBridge.size(set) do
+    case NifBridge.size_nif(set) do
       {:ok, size} ->
         size
 
@@ -227,7 +227,7 @@ defmodule Discord.SortedSet do
   """
   @spec to_list(set :: t()) :: [Types.supported_term()] | Types.common_errors()
   def to_list(set) do
-    case NifBridge.to_list(set) do
+    case NifBridge.to_list_nif(set) do
       {:ok, result} when is_list(result) ->
         result
 
@@ -245,7 +245,7 @@ defmodule Discord.SortedSet do
   @spec at(set :: t(), index :: non_neg_integer(), default :: any()) ::
           (item_or_default :: Types.supported_term() | any()) | Types.common_errors()
   def at(set, index, default \\ nil) do
-    case NifBridge.at(set, index) do
+    case NifBridge.at_nif(set, index) do
       {:ok, item} ->
         item
 
@@ -269,7 +269,7 @@ defmodule Discord.SortedSet do
   @spec slice(set :: t(), start :: non_neg_integer(), amount :: non_neg_integer()) ::
           [Types.supported_term()] | Types.common_errors()
   def slice(set, start, amount) do
-    case NifBridge.slice(set, start, amount) do
+    case NifBridge.slice_nif(set, start, amount) do
       {:ok, items} when is_list(items) ->
         items
 
@@ -288,7 +288,7 @@ defmodule Discord.SortedSet do
   @spec find_index(set :: t(), item :: Types.supported_term()) ::
           non_neg_integer() | nil | Types.common_errors()
   def find_index(set, item) do
-    case NifBridge.find_index(set, item) do
+    case NifBridge.find_index_nif(set, item) do
       {:ok, index} ->
         index
 

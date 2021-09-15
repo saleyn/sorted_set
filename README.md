@@ -6,6 +6,10 @@ SortedSet is a fast and efficient data structure that provides certain guarantee
 functionality.  The core data structure and algorithms are implemented in a Native Implemented
 Function in the Rust Programming Language, using the [Rustler crate](https://github.com/hansihe/rustler).
 
+## Contributors
+
+- Serge Aleynikov (implemented stand-alone compilation for Erlang)
+
 ## Installation
 
 Add SortedSet to your dependencies and then install with `mix do deps.get, deps.compile`
@@ -16,6 +20,13 @@ def deps do
     {:sorted_set_nif, "~> 1.0.0"}
   ]
 end
+```
+
+For Erlang projects add to `rebar.config` the following and do `rebar3 compile`:
+```erlang
+{deps, [
+  {sorted_set, ".*", {git, "https://github.com/saleyn/sorted_set.git", {branch, "erlang"}}},
+]}.
 ```
 
 ## Implementation Details

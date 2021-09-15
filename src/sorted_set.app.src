@@ -1,0 +1,6 @@
+{application,sorted_set,
+             [{description,"Sorted Set"},
+              {vsn, "0.1.0"},
+              {applications,[kernel,stdlib]},
+              {licenses,["MIT"]},
+              {links,[{"Github","https://github.com/saleyn/sorted_set_nif"}]}]}.

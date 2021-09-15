@@ -14,6 +14,10 @@ impl Bucket {
         self.data.len()
     }
 
+    pub fn clear(&mut self) {
+        self.data.clear()
+    }
+
     pub fn add(&mut self, item: SupportedTerm) -> AddResult {
         match self.data.binary_search(&item) {
             Ok(idx) => Duplicate(idx),

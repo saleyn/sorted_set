@@ -22,8 +22,14 @@ defmodule Discord.SortedSet.NifBridge do
   To prevent copying the set into and out of NIF space, the NIF returns an opaque reference handle
   that should be used in all subsequent calls to identify the SortedSet.
   """
-  @spec new(capacity :: pos_integer(), bucket_size :: pos_integer()) :: {:ok, SortedSet.t()}
-  def new(_capacity, _bucket_size), do: :erlang.nif_error(:nif_not_loaded)
+  @spec new_nif(capacity :: pos_integer(), bucket_size :: pos_integer()) :: {:ok, SortedSet.t()}
+  def new_nif(_capacity, _bucket_size), do: :erlang.nif_error(:nif_not_loaded)
+
+  @doc """
+  Clear a SortedSet.
+  """
+  @spec clear_nif(set :: SortedSet.t()) :: SortedSet.t()
+  def clear_nif(_set), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Creates an empty SortedSet.
@@ -33,8 +39,8 @@ defmodule Discord.SortedSet.NifBridge do
   functions.  The only valid operation that can be performed on an `empty` `Discord.SortedSet` is
   `append_bucket/2`, all other functions expect that the bucket not be completely empty.
   """
-  @spec empty(capacity :: pos_integer(), bucket_size :: pos_integer()) :: {:ok, SortedSet.t()}
-  def empty(_capacity, _bucket_size), do: :erlang.nif_error(:nif_not_loaded)
+  @spec empty_nif(capacity :: pos_integer(), bucket_size :: pos_integer()) :: {:ok, SortedSet.t()}
+  def empty_nif(_capacity, _bucket_size), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Appends a buckets worth of sorted terms to the SortedSet
@@ -46,9 +52,9 @@ defmodule Discord.SortedSet.NifBridge do
   circumvents the sorting and sanity checking logic.  Use the constructors in `Discord.ßSortedSet`
   for a safer and more ergonomic experience, use great care when calling this function directly.
   """
-  @spec append_bucket(set :: SortedSet.t(), terms :: [Types.supported_term()]) ::
+  @spec append_bucket_nif(set :: SortedSet.t(), terms :: [Types.supported_term()]) ::
           :ok | Types.nif_append_bucket_result() | Types.common_errors()
-  def append_bucket(_set, _terms), do: :erlang.nif_error(:nif_not_loaded)
+  def append_bucket_nif(_set, _terms), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Gets the size of the SortedSet.
@@ -56,42 +62,42 @@ defmodule Discord.SortedSet.NifBridge do
   This function follows the standard Elixir naming convention, size takes O(1) time as the size
   is tracked with every addition and removal.
   """
-  @spec size(set :: SortedSet.t()) :: non_neg_integer()
-  def size(_set), do: :erlang.nif_error(:nif_not_loaded)
+  @spec size_nif(set :: SortedSet.t()) :: non_neg_integer()
+  def size_nif(_set), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Adds an item to the SortedSet.
   """
-  @spec add(set :: SortedSet.t(), item :: any()) :: Types.nif_add_result() | Types.common_errors()
-  def add(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
+  @spec add_nif(set :: SortedSet.t(), item :: any()) :: Types.nif_add_result() | Types.common_errors()
+  def add_nif(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Removes an item from the SortedSet.
   """
-  @spec remove(set :: SortedSet.t(), item :: any()) ::
+  @spec remove_nif(set :: SortedSet.t(), item :: any()) ::
           Types.nif_remove_result() | Types.common_errors()
-  def remove(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
+  def remove_nif(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Retrieve the item at the specified index
   """
-  @spec at(set :: SortedSet.t(), index :: non_neg_integer()) ::
+  @spec at_nif(set :: SortedSet.t(), index :: non_neg_integer()) ::
           Types.nif_at_result() | Types.common_errors()
-  def at(_set, _index), do: :erlang.nif_error(:nif_not_loaded)
+  def at_nif(_set, _index), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Retrieve a slice of starting at the start index and taking up to amount
   """
-  @spec slice(set :: SortedSet.t(), start :: non_neg_integer(), amount :: non_neg_integer()) ::
+  @spec slice_nif(set :: SortedSet.t(), start :: non_neg_integer(), amount :: non_neg_integer()) ::
           [any()] | Types.common_errors()
-  def slice(_set, _start, _amount), do: :erlang.nif_error(:nif_not_loaded)
+  def slice_nif(_set, _start, _amount), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Finds the index of the specified item
   """
-  @spec find_index(set :: SortedSet.t(), item :: any()) ::
+  @spec find_index_nif(set :: SortedSet.t(), item :: any()) ::
           Types.nif_find_result() | Types.common_errors()
-  def find_index(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
+  def find_index_nif(_set, _item), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Converts a SortedSet into a standard list
@@ -99,8 +105,8 @@ defmodule Discord.SortedSet.NifBridge do
   Note: This is potentially an expensive operation because it must copy the NIF data back into
   BEAM VM space.
   """
-  @spec to_list(set :: SortedSet.t()) :: [any()] | Types.common_errors()
-  def to_list(_set), do: :erlang.nif_error(:nif_not_loaded)
+  @spec to_list_nif(set :: SortedSet.t()) :: [any()] | Types.common_errors()
+  def to_list_nif(_set), do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
   Returns a string representation of the underlying Rust data structure.

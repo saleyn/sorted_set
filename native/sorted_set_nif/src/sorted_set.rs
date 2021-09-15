@@ -33,6 +33,14 @@ impl SortedSet {
         result
     }
 
+    pub fn clear(&mut self) {
+        for i in 0..self.buckets.len() {
+            self.buckets[i].clear();
+        }
+        self.buckets.clear();
+        self.size = 0;
+    }
+
     pub fn append_bucket(&mut self, items: Vec<SupportedTerm>) -> AppendBucketResult {
         if self.configuration.max_bucket_size <= items.len() {
             return AppendBucketResult::MaxBucketSizeExceeded;
@@ -268,13 +276,13 @@ mod tests {
         let item = Bitstring(String::from("test-item"));
         match set.add(item) {
             Added(idx) => assert_eq!(idx, 0),
-            Duplicate(idx) => panic!(format!("Unexpected Duplicate({}) on initial add", idx)),
+            Duplicate(idx) => panic!("Unexpected Duplicate({}) on initial add", idx),
         };
         assert_eq!(set.size(), 1);
 
         let item = Bitstring(String::from("test-item"));
         match set.add(item) {
-            Added(idx) => panic!(format!("Unexpected Added({}) on subsequent add", idx)),
+            Added(idx) => panic!("Unexpected Added({}) on subsequent add", idx),
             Duplicate(idx) => assert_eq!(idx, 0),
         }
         assert_eq!(set.size(), 1);
@@ -296,10 +304,10 @@ mod tests {
         assert_eq!(*set.at(2).unwrap(), Bitstring(String::from("ccc")));
 
         match set.at(3) {
-            Some(item) => panic!(format!(
+            Some(item) => panic!(
                 "Unexpected item found after end of set: {:?}",
                 item
-            )),
+            ),
             None => assert!(true),
         };
     }
@@ -325,10 +333,10 @@ mod tests {
 
         match set.remove(&item) {
             Removed(idx) => assert_eq!(idx, 1),
-            NotFound => panic!(format!(
+            NotFound => panic!(
                 "Unexpected NotFound for item that should be present: {:?}",
                 item
-            )),
+            ),
         }
 
         assert_eq!(
@@ -338,6 +346,10 @@ mod tests {
                 Bitstring(String::from("ccc")),
             ]
         );
+
+        set.clear();
+        assert_eq!(0, set.size());
+        assert_eq!(set.to_vec(), vec![]);
     }
 
     #[test]
@@ -405,10 +417,10 @@ mod tests {
 
         match set.remove(&item) {
             Removed(idx) => assert_eq!(idx, 3),
-            NotFound => panic!(format!(
+            NotFound => panic!(
                 "Unexpected NotFound for item that should be present: {:?}",
                 item
-            )),
+            ),
         }
 
         assert_eq!(
